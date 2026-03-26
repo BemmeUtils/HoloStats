@@ -43,7 +43,7 @@ Wenn du einen Fehler findest, öffne bitte ein [Issue](https://github.com/BemmeU
 
 ### 2. Features vorschlagen
 Du hast eine Idee für eine neue Funktion?
-Bitte öffne ein Issue und markiere es mit dem Label `feature-request`.
+Bitte öffne ein Issue und markiere es mit dem Label `enhancement`.
 Ein Entwickler, oder du selber können, dieses dann umsetzen.
 
 ### 3. Code-Änderungen einreichen (Pull Requests)
