@@ -36,12 +36,6 @@ public class JsonUtil {
         return new JsonParser().parse(jsonString).getAsJsonObject();
     }
 
-    /**
-     * Get a jackpot by its value
-     *
-     * @param value The money value of the jackpot.
-     * @return An instance of the jackpot with the given value. If no jackpot is found, null is returned.
-     */
     public Jackpot getJackpot(double value) {
         if (this.jsonObject.has("jackpots")) {
             JsonArray jackpots = this.jsonObject.getAsJsonArray("jackpots");
@@ -55,11 +49,24 @@ public class JsonUtil {
         return null;
     }
 
-    /**
-     * Add a jackpot to the JSON file.
-     *
-     * @param value The money value of the jackpot.
-     */
+    public List<Jackpot> getAllJackpots() {
+        List<Jackpot> jackpotList = new ArrayList<>();
+        if (this.jsonObject.has("jackpots")) {
+            JsonArray jackpots = this.jsonObject.getAsJsonArray("jackpots");
+            for (int i = 0; i < jackpots.size(); i++) {
+                JsonObject jackpotObject = jackpots.get(i).getAsJsonObject();
+                if (jackpotObject.has("price")) {
+                    jackpotList.add(new Jackpot(
+                            jackpotObject.get("price").getAsInt(),
+                            jackpotObject.get("times_purchased").getAsInt(),
+                            jackpotObject.get("last_username").getAsString()
+                    ));
+                }
+            }
+        }
+        return jackpotList;
+    }
+
     public void addJackpot(double value) {
         if (!this.jsonObject.has("jackpots")) {
             this.jsonObject.add("jackpots", new JsonArray());
@@ -72,14 +79,6 @@ public class JsonUtil {
         jackpots.add(jackpotObject);
         saveJsonToFile();
     }
-
-    /**
-     * Saves an updated jackpot to the JSON file.
-     *
-     * @param value          The money value of the jackpot.
-     * @param timesPurchased The number of times the jackpot has been purchased by the bot.
-     * @param lastUsername   The last username that bought the jackpot. Doesn't need to be an actual username.
-     */
 
     public void saveJackpot(double value, int timesPurchased, String lastUsername) {
         if (!this.jsonObject.has("jackpots")) {
@@ -97,11 +96,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Saves an updated jackpot to the JSON file.
-     *
-     * @param jackpot An instance of the jackpot to save.
-     */
     public void saveJackpot(Jackpot jackpot) {
         if (!this.jsonObject.has("jackpots")) {
             this.jsonObject.add("jackpots", new JsonArray());
@@ -118,11 +112,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Removes a jackpot from the JSON file.
-     *
-     * @param value The money value of the jackpot.
-     */
     public void removeJackpot(double value) {
         if (this.jsonObject.has("jackpots")) {
             JsonArray jackpots = jsonObject.getAsJsonArray("jackpots");
@@ -138,12 +127,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Get a wager of a player the player's name
-     *
-     * @param uuid The uuid of the player
-     * @return An object of the wager. If no wager is found, null is returned.
-     */
     public Wager getWager(String uuid) {
         if (this.jsonObject.has("wagers")) {
             JsonArray wagers = this.jsonObject.getAsJsonArray("wagers");
@@ -157,13 +140,6 @@ public class JsonUtil {
         return null;
     }
 
-    /**
-     * Add a wager to the JSON file.
-     *
-     * @param playerUuid The player's uuid.
-     * @param playerName The player's name.
-     * @param wager      The amount of money the player wagers.
-     */
     public void addWager(String playerUuid, String playerName, double wager) {
         if (!this.jsonObject.has("wagers")) {
             this.jsonObject.add("wagers", new JsonArray());
@@ -177,11 +153,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Saves an updated wager to the JSON file.
-     *
-     * @param wager An instance of the wager to save.
-     */
     public void saveWager(Wager wager) {
         if (!this.jsonObject.has("wagers")) {
             this.jsonObject.add("wagers", new JsonArray());
@@ -198,11 +169,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Removes a wager entry from the JSON file.
-     *
-     * @param uuid The uuid of the player.
-     */
     public void removeWager(String uuid) {
         if (this.jsonObject.has("wagers")) {
             JsonArray wagers = jsonObject.getAsJsonArray("wagers");
@@ -218,12 +184,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Create a holo and save it to the JSON file.
-     *
-     * @param name         Name of the holo. Holo name is a number.
-     * @param hologramType The type of the holo.
-     */
     public void addHolo(int name, Hologram.HologramType hologramType) {
         if (!this.jsonObject.has("holos")) {
             this.jsonObject.add("holos", new JsonArray());
@@ -237,12 +197,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Get a holo by its name
-     *
-     * @param name Name of the holo. Holo name is a number.
-     * @return an instance of the holo. If no holo is found, null is returned.
-     */
     public Hologram getHologram(int name) {
         if (this.jsonObject.has("holos")) {
             JsonArray holos = this.jsonObject.getAsJsonArray("holos");
@@ -274,11 +228,6 @@ public class JsonUtil {
         return null;
     }
 
-    /**
-     * Get all holograms from the JSON file.
-     *
-     * @return A list of all holograms. If no holograms exist, an empty list is returned.
-     */
     public List<Hologram> getAllHolograms() {
         List<Hologram> hologramList = new ArrayList<>();
 
@@ -312,11 +261,6 @@ public class JsonUtil {
         return hologramList;
     }
 
-    /**
-     * Remove a holo from the JSON file.
-     *
-     * @param name The name of the holo. Holo name is a number.
-     */
     public void removeHolo(int name) {
         if (this.jsonObject.has("holos")) {
             JsonArray holos = jsonObject.getAsJsonArray("holos");
@@ -332,11 +276,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Saves an updated hologram to the JSON file.
-     *
-     * @param hologram An instance of the hologram to save.
-     */
     public void saveHologram(Hologram hologram) {
         if (!this.jsonObject.has("holos")) {
             this.jsonObject.add("holos", new JsonArray());
@@ -357,14 +296,6 @@ public class JsonUtil {
         saveJsonToFile();
     }
 
-    /**
-     * Add a jackpot to a hologram.
-     *
-     * @param name    The name of the holo. Holo name is a number.
-     * @param line    The line to display the jackpot on. Must be between 1 and 3 (inclusive).
-     * @param jackpot The jackpot to display.
-     * @throws IllegalArgumentException if {@code line} is not between 1 and 3.
-     */
     public void addJackpotToHolo(int name, int line, Jackpot jackpot) {
         if (line < 1 || line > 3) throw new IllegalArgumentException("Line must be between 1 and 3");
 
@@ -379,25 +310,15 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Get the top 3 wagers sorted by amount (highest to lowest).
-     *
-     * @return A list of the top 3 wagers. If fewer than 3 wagers exist, all available wagers are returned.
-     */
     public List<Wager> getTop3Wagers() {
         List<Wager> allWagers = getAllWagers();
 
         return allWagers.stream()
-                .sorted((w1, w2) -> Double.compare(w2.getWager(), w1.getWager())) // Sortiere absteigend
+                .sorted((w1, w2) -> Double.compare(w2.getWager(), w1.getWager()))
                 .limit(3)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get all wagers from the JSON file.
-     *
-     * @return A list of all wagers. If no wagers exist, an empty list is returned.
-     */
     public List<Wager> getAllWagers() {
         List<Wager> wagerList = new ArrayList<>();
         if (this.jsonObject.has("wagers")) {
