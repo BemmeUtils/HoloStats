@@ -32,11 +32,14 @@ public class PurchaseListener {
                         jackpot.setLastUsername(playerName);
                         Addon.getJsonUtil().saveJackpot(jackpot);
 
+                        double total = jackpot.getPrice() * amount;
+
                         String discordMessage = Messages.DISCORD_JACKPOT.template()
                                 .with("price", Helper.getNUMBER_FORMAT().format(jackpot.getPrice()))
                                 .with("amount", jackpot.getTimesPurchased())
                                 .with("player", playerName)
                                 .with("purchase_amount", amount)
+                                .with("total", Helper.getNUMBER_FORMAT().format(total))
                                 .build();
 
                         String chatMessage = Messages.CHAT_JACKPOT.template()
@@ -44,6 +47,7 @@ public class PurchaseListener {
                                 .with("amount", jackpot.getTimesPurchased())
                                 .with("player", playerName)
                                 .with("purchase_amount", amount)
+                                .with("total", Helper.getNUMBER_FORMAT().format(total))
                                 .build();
 
                         if (Addon.isSendJackpotChatMessage() && price.getPrice() >= Addon.getMinimumJackpotBroadcastValue()) {
