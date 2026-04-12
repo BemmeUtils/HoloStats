@@ -56,6 +56,29 @@ public class JsonUtil {
     }
 
     /**
+     * Get all jackpots from the JSON file.
+     *
+     * @return A list of all jackpots. If no jackpots exist, an empty list is returned.
+     */
+    public List<Jackpot> getAllJackpots() {
+        List<Jackpot> jackpotList = new ArrayList<>();
+        if (this.jsonObject.has("jackpots")) {
+            JsonArray jackpots = this.jsonObject.getAsJsonArray("jackpots");
+            for (int i = 0; i < jackpots.size(); i++) {
+                JsonObject jackpotObject = jackpots.get(i).getAsJsonObject();
+                if (jackpotObject.has("price")) {
+                    jackpotList.add(new Jackpot(
+                            jackpotObject.get("price").getAsInt(),
+                            jackpotObject.get("times_purchased").getAsInt(),
+                            jackpotObject.get("last_username").getAsString()
+                    ));
+                }
+            }
+        }
+        return jackpotList;
+    }
+
+    /**
      * Add a jackpot to the JSON file.
      *
      * @param value The money value of the jackpot.
@@ -80,7 +103,6 @@ public class JsonUtil {
      * @param timesPurchased The number of times the jackpot has been purchased by the bot.
      * @param lastUsername   The last username that bought the jackpot. Doesn't need to be an actual username.
      */
-
     public void saveJackpot(double value, int timesPurchased, String lastUsername) {
         if (!this.jsonObject.has("jackpots")) {
             this.jsonObject.add("jackpots", new JsonArray());
@@ -388,7 +410,7 @@ public class JsonUtil {
         List<Wager> allWagers = getAllWagers();
 
         return allWagers.stream()
-                .sorted((w1, w2) -> Double.compare(w2.getWager(), w1.getWager())) // Sortiere absteigend
+                .sorted((w1, w2) -> Double.compare(w2.getWager(), w1.getWager()))
                 .limit(3)
                 .collect(Collectors.toList());
     }

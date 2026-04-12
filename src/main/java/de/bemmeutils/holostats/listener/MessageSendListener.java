@@ -8,6 +8,8 @@ import de.bemmeutils.holostats.utils.Helper;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.main.LabyMod;
 
+import java.util.List;
+
 public class MessageSendListener implements MessageSendEvent {
     @Override
     public boolean onSend(String message) {
@@ -19,7 +21,21 @@ public class MessageSendListener implements MessageSendEvent {
         }
         switch (args[1].toLowerCase()) {
             case "jackpot":
-                if (args.length == 4 && args[2].equalsIgnoreCase("add")) {
+                if (args.length == 3 && args[2].equalsIgnoreCase("list")) {
+                    List<Jackpot> jackpots = Addon.getJsonUtil().getAllJackpots();
+                    if (jackpots.isEmpty()) {
+                        LabyMod.getInstance().displayMessageInChat("§cEs sind keine Jackpots vorhanden!");
+                        return true;
+                    }
+                    LabyMod.getInstance().displayMessageInChat("§e--- Jackpot Liste ---");
+                    for (Jackpot jackpot : jackpots) {
+                        LabyMod.getInstance().displayMessageInChat(String.format("§a%s$ §e| Gekauft: §a%dx §e| Letzter Käufer: §a%s",
+                                Helper.getNUMBER_FORMAT().format(jackpot.getPrice()),
+                                jackpot.getTimesPurchased(),
+                                jackpot.getLastUsername().isEmpty() ? "Niemand" : jackpot.getLastUsername()));
+                    }
+                    return true;
+                } else if (args.length == 4 && args[2].equalsIgnoreCase("add")) {
                     double price;
                     try {
                         price = Double.parseDouble(args[3]);
@@ -209,6 +225,7 @@ public class MessageSendListener implements MessageSendEvent {
         LabyMod.getInstance().displayMessageInChat("§e/ggstats jackpot add <Preis>");
         LabyMod.getInstance().displayMessageInChat("§e/ggstats jackpot edit <Preis> <Anzahl> <Spieler>");
         LabyMod.getInstance().displayMessageInChat("§e/ggstats jackpot remove <Preis>");
+        LabyMod.getInstance().displayMessageInChat("§e/ggstats jackpot list");
         LabyMod.getInstance().displayMessageInChat("§2");
         LabyMod.getInstance().displayMessageInChat("§e/ggstats umsatz info <Spieler>");
         LabyMod.getInstance().displayMessageInChat("§e/ggstats umsatz edit <Spieler> <Summe>");
