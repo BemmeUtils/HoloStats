@@ -45,7 +45,7 @@ public class Addon extends LabyModAddon {
     private static boolean sendJackpotChatMessage, sendJackpotDiscordMessage;
     @Getter
     @Setter
-    private static Integer minimumJackpotBroadcastValue;
+    private static Integer minimumJackpotBroadcastValue, minimumDiscordBroadcastValue;
 
     @Override
     public void onEnable() {
@@ -78,6 +78,7 @@ public class Addon extends LabyModAddon {
         setSendJackpotDiscordMessage(getConfig().has("sendJackpotDiscordMessage") && getConfig().get("sendJackpotDiscordMessage").getAsBoolean());
         setDiscordWebhookUrl(getConfig().has("discordWebhookUrl") ? getConfig().get("discordWebhookUrl").getAsString() : "");
         setMinimumJackpotBroadcastValue(getConfig().has("minimumJackpotBroadcastValue") ? getConfig().get("minimumJackpotBroadcastValue").getAsInt() : 0);
+        setMinimumDiscordBroadcastValue(getConfig().has("minimumDiscordBroadcastValue") ? getConfig().get("minimumDiscordBroadcastValue").getAsInt() : 0);
     }
 
     @Override
@@ -128,6 +129,11 @@ public class Addon extends LabyModAddon {
         settingsCategory.getSubSettings().add(new NumberElement("Jackpot Chat Minimum Summe", new ControlElement.IconData(Material.GOLD_INGOT), getMinimumJackpotBroadcastValue()).setMinValue(0).setSteps(1).addCallback(value -> {
             setMinimumJackpotBroadcastValue(value);
             this.getConfig().addProperty("minimumJackpotBroadcastValue", value);
+            this.saveConfig();
+        }));
+        settingsCategory.getSubSettings().add(new NumberElement("Discord Chat Minimum Summe", new ControlElement.IconData(Material.GOLD_INGOT), getMinimumDiscordBroadcastValue()).setMinValue(0).setSteps(1).addCallback(value -> {
+            setMinimumDiscordBroadcastValue(value);
+            this.getConfig().addProperty("minimumDiscordBroadcastValue", value);
             this.saveConfig();
         }));
     }

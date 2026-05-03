@@ -29,6 +29,7 @@
     - {amount} = Anzahl der bisheringen Ankäufe
     - {player} = Name des letzten Spielers
     - {purchase_amount} = Anzahl im letzten Ankauf
+    - {total} = Insgesamter Wert der HGWs
 
 ### Ingame-Commands
 - /ggstats - Öffnet die Ingame-Command Übersicht

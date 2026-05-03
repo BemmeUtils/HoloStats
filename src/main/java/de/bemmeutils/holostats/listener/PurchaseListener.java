@@ -51,7 +51,11 @@ public class PurchaseListener {
                                 .build();
 
                         if (Addon.isSendJackpotChatMessage() && price.getPrice() >= Addon.getMinimumJackpotBroadcastValue()) {
-                            Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                            if(chatMessage.startsWith("/")){
+                                Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.command().text(chatMessage.substring(1)));
+                            }else {
+                                Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                            }
                         }
 
                         Addon.getJsonUtil().getAllHolograms().stream()
@@ -61,7 +65,9 @@ public class PurchaseListener {
                                     holo.update(jackpot);
                                 });
 
-                        if (!Addon.isSendJackpotDiscordMessage() || Addon.getDiscordWebhookUrl().equalsIgnoreCase("")) return;
+                        if (!Addon.isSendJackpotDiscordMessage() || Addon.getDiscordWebhookUrl().equalsIgnoreCase(""))
+                            return;
+                        if (price.getPrice() < Addon.getMinimumDiscordBroadcastValue()) return;
                         try {
                             new DiscordJackpotMessage(Addon.getDiscordWebhookUrl(), Color.GREEN, discordMessage, playerUuid).getWebhook().execute();
                         } catch (Exception exception) {
