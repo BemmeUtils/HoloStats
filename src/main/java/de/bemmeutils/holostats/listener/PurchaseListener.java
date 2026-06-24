@@ -54,15 +54,15 @@ public class PurchaseListener {
                         if (Addon.isSendJackpotChatMessage() && price.getPrice() >= Addon.getMinimumJackpotBroadcastValue()) {
                             if (chatMessage.startsWith("/")) {
                                 Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.command().text(chatMessage.substring(1)));
-                                return;
-                            }
-                            switch (Addon.getJackpotMessageTarget()) {
-                                case CHAT:
-                                    Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
-                                    return;
-                                case PLOT_CHAT:
-                                    Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.plotChat().text(chatMessage));
-                                    return;
+                            } else {
+                                switch (Addon.getJackpotMessageTarget()) {
+                                    case CHAT:
+                                        Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                        break;
+                                    case PLOT_CHAT:
+                                        Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.plotChat().text(chatMessage));
+                                        break;
+                                }
                             }
                         }
 
