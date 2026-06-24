@@ -3,6 +3,7 @@ package de.bemmeutils.holostats;
 import de.bemmeutils.holostats.listener.MessageSendListener;
 import de.bemmeutils.holostats.listener.PurchaseListener;
 import de.bemmeutils.holostats.listener.SellListener;
+import de.bemmeutils.holostats.messages.MessageTarget;
 import de.bemmeutils.holostats.utils.FileUtil;
 import de.bemmeutils.holostats.utils.JsonUtil;
 import de.byteandbit.velociraptor.api.VelociraptorAPI;
@@ -11,6 +12,7 @@ import de.byteandbit.velociraptor.api.chat.ChatPriority;
 import lombok.Getter;
 import lombok.Setter;
 import net.labymod.api.LabyModAddon;
+import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.settings.elements.*;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
@@ -46,6 +48,9 @@ public class Addon extends LabyModAddon {
     @Getter
     @Setter
     private static Integer minimumJackpotBroadcastValue, minimumDiscordBroadcastValue;
+    @Getter
+    @Setter
+    private static MessageTarget jackpotMessageTarget;
 
     @Override
     public void onEnable() {
@@ -79,6 +84,10 @@ public class Addon extends LabyModAddon {
         setDiscordWebhookUrl(getConfig().has("discordWebhookUrl") ? getConfig().get("discordWebhookUrl").getAsString() : "");
         setMinimumJackpotBroadcastValue(getConfig().has("minimumJackpotBroadcastValue") ? getConfig().get("minimumJackpotBroadcastValue").getAsInt() : 0);
         setMinimumDiscordBroadcastValue(getConfig().has("minimumDiscordBroadcastValue") ? getConfig().get("minimumDiscordBroadcastValue").getAsInt() : 0);
+
+        setJackpotMessageTarget(getConfig().has("jackpotMessageTarget")
+                ? parseMessageTarget(getConfig().get("jackpotMessageTarget").getAsString())
+                : MessageTarget.CHAT);
     }
 
     @Override
@@ -108,6 +117,19 @@ public class Addon extends LabyModAddon {
             this.getConfig().addProperty("jackpotDiscordText", value);
             this.saveConfig();
         })));
+        DropDownMenu<MessageTarget> targetMenu =
+                new DropDownMenu<MessageTarget>("Chat", 0, 0, 0, 0)
+                        .fill(MessageTarget.values());
+        targetMenu.setSelected(getJackpotMessageTarget());
+
+        DropDownElement<MessageTarget> targetDropDown =
+                new DropDownElement<>("Chat", targetMenu);
+        targetDropDown.setChangeListener(target -> {
+            setJackpotMessageTarget(target);
+            getConfig().addProperty("jackpotMessageTarget", target.name());
+            saveConfig();
+        });
+        messageCategory.getSubSettings().add(targetDropDown);
 
         ListContainerElement settingsCategory = new ListContainerElement("Einstellungen", new ControlElement.IconData(Material.REDSTONE_COMPARATOR_ON));
         list.add(settingsCategory);
@@ -171,6 +193,14 @@ public class Addon extends LabyModAddon {
             commandQueue.remove(0);
             Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.command().text(command).priority(ChatPriority.HIGH)); //reserve the highest priority for really important commands e.g., /p kick
         }, 0, 5, TimeUnit.SECONDS);
+    }
+
+    private static MessageTarget parseMessageTarget(String value) {
+        try {
+            return MessageTarget.valueOf(value);
+        } catch (IllegalArgumentException exception) {
+            return MessageTarget.CHAT;
+        }
     }
 
 }

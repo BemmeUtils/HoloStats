@@ -8,6 +8,7 @@ import de.bemmeutils.holostats.utils.Helper;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.main.LabyMod;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class MessageSendListener implements MessageSendEvent {
@@ -28,12 +29,10 @@ public class MessageSendListener implements MessageSendEvent {
                         return true;
                     }
                     LabyMod.getInstance().displayMessageInChat("§e--- Jackpot Liste ---");
-                    for (Jackpot jackpot : jackpots) {
-                        LabyMod.getInstance().displayMessageInChat(String.format("§a%s$ §e| Gekauft: §a%dx §e| Letzter Käufer: §a%s",
-                                Helper.getNUMBER_FORMAT().format(jackpot.getPrice()),
-                                jackpot.getTimesPurchased(),
-                                jackpot.getLastUsername().isEmpty() ? "Niemand" : jackpot.getLastUsername()));
-                    }
+
+                    jackpots.stream().sorted(Comparator.comparing(Jackpot::getPrice).reversed()).forEach(jackpot -> {
+                        LabyMod.getInstance().displayMessageInChat(String.format("§a%s$ §e| Gekauft: §a%dx §e| Letzter Käufer: §a%s", Helper.getNUMBER_FORMAT().format(jackpot.getPrice()), jackpot.getTimesPurchased(), jackpot.getLastUsername().isEmpty() ? "Niemand" : jackpot.getLastUsername()));
+                    });
                     return true;
                 } else if (args.length == 4 && args[2].equalsIgnoreCase("add")) {
                     double price;

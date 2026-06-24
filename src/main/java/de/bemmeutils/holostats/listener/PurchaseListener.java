@@ -4,6 +4,7 @@ import de.bemmeutils.holostats.Addon;
 import de.bemmeutils.holostats.api.Hologram;
 import de.bemmeutils.holostats.api.Jackpot;
 import de.bemmeutils.holostats.messages.DiscordJackpotMessage;
+import de.bemmeutils.holostats.messages.MessageTarget;
 import de.bemmeutils.holostats.messages.Messages;
 import de.bemmeutils.holostats.utils.Helper;
 import de.byteandbit.velociraptor.api.chat.ChatMessage;
@@ -51,10 +52,17 @@ public class PurchaseListener {
                                 .build();
 
                         if (Addon.isSendJackpotChatMessage() && price.getPrice() >= Addon.getMinimumJackpotBroadcastValue()) {
-                            if(chatMessage.startsWith("/")){
+                            if (chatMessage.startsWith("/")) {
                                 Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.command().text(chatMessage.substring(1)));
-                            }else {
-                                Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                return;
+                            }
+                            switch (Addon.getJackpotMessageTarget()) {
+                                case CHAT:
+                                    Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                    return;
+                                case PLOT_CHAT:
+                                    Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.plotChat().text(chatMessage));
+                                    return;
                             }
                         }
 
