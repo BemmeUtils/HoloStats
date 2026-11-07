@@ -48,7 +48,7 @@ public class JsonUtil {
             for (int i = 0; i < jackpots.size(); i++) {
                 JsonObject jackpotObject = jackpots.get(i).getAsJsonObject();
                 if (jackpotObject.has("price") && jackpotObject.get("price").getAsDouble() == value) {
-                    return new Jackpot(jackpotObject.get("price").getAsInt(), jackpotObject.get("times_purchased").getAsInt(), jackpotObject.get("last_username").getAsString());
+                    return new Jackpot(jackpotObject.get("price").getAsDouble(), jackpotObject.get("times_purchased").getAsInt(), jackpotObject.get("last_username").getAsString());
                 }
             }
         }
@@ -68,7 +68,7 @@ public class JsonUtil {
                 JsonObject jackpotObject = jackpots.get(i).getAsJsonObject();
                 if (jackpotObject.has("price")) {
                     jackpotList.add(new Jackpot(
-                            jackpotObject.get("price").getAsInt(),
+                            jackpotObject.get("price").getAsDouble(),
                             jackpotObject.get("times_purchased").getAsInt(),
                             jackpotObject.get("last_username").getAsString()
                     ));
@@ -151,7 +151,7 @@ public class JsonUtil {
             JsonArray updatedJackpots = new JsonArray();
             for (int i = 0; i < jackpots.size(); i++) {
                 JsonObject jackpotObject = jackpots.get(i).getAsJsonObject();
-                if (jackpotObject.get("price").getAsInt() != value) {
+                if (jackpotObject.get("price").getAsDouble() != value) {
                     updatedJackpots.add(jackpotObject);
                 }
             }
