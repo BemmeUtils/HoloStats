@@ -38,6 +38,9 @@ public class Addon extends LabyModAddon {
     @Getter
     @Setter
     private static VelociraptorAPI velociraptorAPI;
+    @Getter
+    @Setter
+    private static long lastJackpotMessageSent;
 
     @Getter
     @Setter
@@ -47,7 +50,7 @@ public class Addon extends LabyModAddon {
     private static boolean sendJackpotChatMessage, sendJackpotDiscordMessage;
     @Getter
     @Setter
-    private static Integer minimumJackpotBroadcastValue, minimumDiscordBroadcastValue;
+    private static Integer minimumJackpotBroadcastValue, minimumDiscordBroadcastValue, jackpotMessageCooldown;
     @Getter
     @Setter
     private static MessageTarget jackpotMessageTarget;
@@ -84,6 +87,8 @@ public class Addon extends LabyModAddon {
         setDiscordWebhookUrl(getConfig().has("discordWebhookUrl") ? getConfig().get("discordWebhookUrl").getAsString() : "");
         setMinimumJackpotBroadcastValue(getConfig().has("minimumJackpotBroadcastValue") ? getConfig().get("minimumJackpotBroadcastValue").getAsInt() : 0);
         setMinimumDiscordBroadcastValue(getConfig().has("minimumDiscordBroadcastValue") ? getConfig().get("minimumDiscordBroadcastValue").getAsInt() : 0);
+
+        setJackpotMessageCooldown(getConfig().has("jackpotMessageCooldown") ? getConfig().get("jackpotMessageCooldown").getAsInt() : 0);
 
         setJackpotMessageTarget(getConfig().has("jackpotMessageTarget")
                 ? parseMessageTarget(getConfig().get("jackpotMessageTarget").getAsString())
@@ -130,6 +135,12 @@ public class Addon extends LabyModAddon {
             saveConfig();
         });
         messageCategory.getSubSettings().add(targetDropDown);
+
+        messageCategory.getSubSettings().add(new NumberElement("Chat Cooldown (s)", new ControlElement.IconData(Material.GOLD_INGOT), getJackpotMessageCooldown()).setMinValue(0).setSteps(1).addCallback(value -> {
+            setJackpotMessageCooldown(value);
+            this.getConfig().addProperty("jackpotMessageCooldown", value);
+            this.saveConfig();
+        }));
 
         ListContainerElement settingsCategory = new ListContainerElement("Einstellungen", new ControlElement.IconData(Material.REDSTONE_COMPARATOR_ON));
         list.add(settingsCategory);

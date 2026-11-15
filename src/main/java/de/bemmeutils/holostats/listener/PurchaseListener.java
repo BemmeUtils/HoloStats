@@ -14,6 +14,7 @@ import de.byteandbit.velociraptor.api.events.purchase.AfterPurchaseEvent;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class PurchaseListener {
     @EventHandler
@@ -57,7 +58,16 @@ public class PurchaseListener {
                             } else {
                                 switch (Addon.getJackpotMessageTarget()) {
                                     case CHAT:
-                                        Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                        if (Addon.getJackpotMessageCooldown() == 0) {
+                                            Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                            Addon.setLastJackpotMessageSent(System.currentTimeMillis());
+                                            break;
+                                        }
+                                        if (System.currentTimeMillis() > Addon.getLastJackpotMessageSent() + TimeUnit.SECONDS.toMillis(Addon.getJackpotMessageCooldown())) {
+                                            Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.chat().text(chatMessage));
+                                            Addon.setLastJackpotMessageSent(System.currentTimeMillis());
+                                            break;
+                                        }
                                         break;
                                     case PLOT_CHAT:
                                         Addon.getVelociraptorAPI().getChatAPI().send(ChatMessage.plotChat().text(chatMessage));
